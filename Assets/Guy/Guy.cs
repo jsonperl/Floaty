@@ -3,8 +3,6 @@ using System.Collections;
 
 public class Guy : MonoBehaviour {
 
-  public float waterLevel;
-  public float floatHeight;
   public Vector3 bouyancyCenterOffset;
   public float bounceDamp;
 
@@ -14,15 +12,20 @@ public class Guy : MonoBehaviour {
 
   // Use this for initialization
 	void Start () {
-    waterLevel = 30;
-    floatHeight = 10;
-    bouyancyCenterOffset = new Vector3(0,-0.0f,0);
-    bounceDamp = 3;
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () {
-    Float();
+    if (transform.position.y + 2.5 <= Water.level / 2) {
+      Debug.Log(string.Format("transform.position.y: {0}", transform.position.y));
+
+      Float();
+    }
+    else {
+      Debug.Log("done");
+      rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+    }
+
     Movement();
 	}
 
@@ -42,7 +45,8 @@ public class Guy : MonoBehaviour {
 
   void Float() {
     Vector3 actionPoint = transform.position + transform.TransformDirection(bouyancyCenterOffset);
-    float forceFactor = 1f - ((actionPoint.y - waterLevel) / floatHeight);
+
+    float forceFactor = 1f - ((actionPoint.y - Water.level) / transform.localScale.y);
 
     if (forceFactor > 0f) {
       Vector3 uplift = -Physics.gravity * (forceFactor - rigidbody.velocity.y * bounceDamp);
